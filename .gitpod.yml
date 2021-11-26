@@ -1,0 +1,19 @@
+---
+# List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
+tasks:
+  # from https://www.gitpod.io/docs/languages/go#start-up-tasks
+  - init: |
+      GOBIN=/tmp/ go install github.com/go-delve/delve/cmd/dlv@master
+      mkdir $GOPATH/bin
+      mv /tmp/dlv $GOPATH/bin/dlv-dap
+      go get -v -t -d ./...
+    command: |
+      go build -o app && ./app
+
+# List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
+# ports:
+#   - port: 3000
+#     onOpen: open-preview
+vscode:
+  extensions:
+    - golang.go
