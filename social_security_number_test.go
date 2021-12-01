@@ -12,9 +12,9 @@ func Test_redactNinUS(t *testing.T) {
 	// that some people might have. So these are possibly in use SSNs here, but
 	// they are not considered PII because they aren't linked to any data we
 	// collected. They're just code for our tests here.
-	testSocialSecurityNumbers := [][]byte{
-		[]byte("001-01-0001"),
-	}
+	testSocialSecurityNumbers := removeDuplicateStr([]string{
+		"001-01-0001",
+	})
 
 	for _, ssn := range testSocialSecurityNumbers {
 		type args struct {
@@ -28,7 +28,7 @@ func Test_redactNinUS(t *testing.T) {
 
 			{
 				name: "Can sanitize a string that is a social security number, reporting 1 redaction.",
-				args: args{ssn},
+				args: args{[]byte(ssn)},
 				want: redactResult{
 					numRedacted: 1,
 					redacted:    []byte(ninUSRedactStub),
@@ -62,7 +62,9 @@ func Test_redactNinUS(t *testing.T) {
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
 				if got := redactNinUS(tt.args.src); !reflect.DeepEqual(got, tt.want) {
-					t.Errorf("redactNinUS() = %v, want %v", got, tt.want)
+					t.Errorf("redactNinUS() = %+v, want %+v",
+						redactResultForDisplayFromRedactResult(got),
+						redactResultForDisplayFromRedactResult(tt.want))
 				}
 			})
 		}

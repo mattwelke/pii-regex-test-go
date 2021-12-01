@@ -11,6 +11,7 @@ const (
 var creditCardRegex *regexp.Regexp
 
 func init() {
+	// Regex source: https://github.com/solvvy/redact-pii/blob/main/src/built-ins/simple-regexp-patterns.ts
 	creditCardRegex = regexp.MustCompile(`\d{4}[ -]?\d{4}[ -]?\d{4}[ -]?\d{4}|\d{4}[ -]?\d{6}[ -]?\d{4}\d?`)
 }
 
