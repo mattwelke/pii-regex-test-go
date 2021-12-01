@@ -1,2 +1,4 @@
 # Build artifacts
 app
+known_product_ids_top_16000.json
+query_for_test_fixtures.sql

@@ -13,11 +13,10 @@ func Test_redactPhoneNumber(t *testing.T) {
 
 		// Variations:
 		"415-555-2671",
-		"415 555 2671",
 		"415.555.2671",
-		"4155552671",
-		"14156662671",
-		"+14156662671",
+		"415 555 2671",
+		"1 415 555 2671",
+		"+14155552671",
 	})
 
 	for _, phoneNumStr := range testPhoneNumbers {
@@ -62,6 +61,40 @@ func Test_redactPhoneNumber(t *testing.T) {
 				want: redactResult{
 					numRedacted: 2,
 					redacted:    []byte(fmt.Sprintf("%s\n%s", phoneNumberRedactStub, phoneNumberRedactStub)),
+				},
+			},
+		}
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				if got := redactPhoneNumber(tt.args.src); !reflect.DeepEqual(got, tt.want) {
+					t.Errorf("redactPhoneNumber() = %+v, want %+v",
+						redactResultForDisplayFromRedactResult(got),
+						redactResultForDisplayFromRedactResult(tt.want))
+				}
+			})
+		}
+	}
+}
+
+func Test_redactPhoneNumberNoProductIDFalsePositives(t *testing.T) {
+	for _, knownProductIDStr := range knownProductIDs {
+		knownProductID := []byte(knownProductIDStr)
+
+		type args struct {
+			src []byte
+		}
+		tests := []struct {
+			name string
+			args args
+			want redactResult
+		}{
+
+			{
+				name: "Can sanitize a string that is a known product ID from one of our customers without falsely considering it to be a phone number, reporting no redactions.",
+				args: args{knownProductID},
+				want: redactResult{
+					numRedacted: 0,
+					redacted:    []byte(knownProductID),
 				},
 			},
 		}
